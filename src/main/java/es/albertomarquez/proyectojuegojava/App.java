@@ -20,29 +20,53 @@ public class App extends Application {
     double posX = 100;
     double posY = 364;
     Group groupPersonaje;
-    int imagenFondoX = 0;
-    ImageView imgView;
+    int imagenFondo1X = 0;
+    int imagenFondo2X = 969;
+    ImageView imgfondo1;
+    ImageView imgfondo2;
+    
     
     @Override
     public void start(Stage stage) {
+        imgfondo1 = new ImageView();
+        imgfondo2 = new ImageView();
+       
         // Panel principal que contendrá los elementos de la pantalla
         Pane paneRoot = new Pane();
-        var scene = new Scene(paneRoot, 970, 480);        
+        var scene = new Scene(paneRoot, 969, 480);        
         stage.setScene(scene);
         stage.show();
+        paneRoot.getChildren().add(imgfondo1); 
+        paneRoot.getChildren().add(imgfondo2);
+        imgfondo1.setLayoutX(imagenFondo1X);
+        imgfondo2.setLayoutX(imagenFondo2X);
+        
         // Cargar la imagen crear objeto ImageView
         Image img = new Image(getClass().getResourceAsStream("/images/mapa_def.jpg"));
-        imgView = new ImageView(img);
-        paneRoot.getChildren().add(imgView); 
+        imgfondo1 = new ImageView(img);
+        paneRoot.getChildren().add(imgfondo1);
+        imgfondo2 = new ImageView(img);
+        paneRoot.getChildren().add(imgfondo2);
         
-        Timeline imagenFondo = new Timeline (
-            new KeyFrame(Duration.seconds(0.017),(ActionEvent ae) -> {
-            imagenFondoX = imagenFondoX -1;
-            imgView.setLayoutX(imagenFondoX);
-             })
-        );
-        imagenFondo.setCycleCount(Timeline.INDEFINITE);
-        imagenFondo.play();
+        //Desplazar la pantala ala izquierda
+        Timeline fondoScroll = new Timeline(
+                  new KeyFrame(Duration.seconds(0.007), (ActionEvent ae) -> {
+                      imagenFondo1X = imagenFondo1X -1;
+                      imgfondo1.setLayoutX(imagenFondo1X);
+                      imagenFondo2X = imagenFondo2X -1;
+                      imgfondo2.setLayoutX(imagenFondo2X);
+                      if (imagenFondo1X == -969) {
+                          imagenFondo1X = 969;
+                      } else if (imagenFondo2X == -969) {
+                          imagenFondo2X = 969;
+                      }
+                  })
+          );
+          fondoScroll.setCycleCount(Timeline.INDEFINITE);
+          fondoScroll.play(); // EJECUTAR EL TIMELINE
+        
+       
+        
       /* --- DIBUJO DEL PERSONAJE --- */
         groupPersonaje = new Group();
         paneRoot.getChildren().add(groupPersonaje);
@@ -106,7 +130,7 @@ public class App extends Application {
         groupPersonaje.setLayoutX(posX);
         groupPersonaje.setLayoutY(posY);
         
-        
+    
         
     }
    
