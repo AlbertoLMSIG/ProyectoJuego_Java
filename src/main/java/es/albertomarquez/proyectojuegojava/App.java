@@ -163,7 +163,6 @@ public class App extends Application {
         //Timeline de movimiento de las vayas
         Timeline vayas = new Timeline(
                 new KeyFrame(Duration.seconds(0.004), (ActionEvent ae) -> {
-                    //Cambiar poscision pincho
                     posXvayas -= 1;
                     groupVayas.setLayoutX(posXvayas);
                     if(posXvayas == -969) {
