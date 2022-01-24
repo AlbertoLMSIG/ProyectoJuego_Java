@@ -8,6 +8,7 @@ import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
@@ -17,13 +18,17 @@ import javafx.util.Duration;
 
 public class App extends Application {
     
-    double posX = 100;
-    double posY = 364;
+    double posXpersonaje = 100;
+    double posYpersonaje = 364;
+    double posXvayas = 100;
+    double posYvayas = 364;
     Group groupPersonaje;
+    Group groupVayas;
     int imagenFondo1X = 0;
     int imagenFondo2X = 969;
     ImageView imgfondo1;
     ImageView imgfondo2;
+    int JUMP_SPEED = 0;
     
     
     @Override
@@ -64,12 +69,19 @@ public class App extends Application {
           );
           fondoScroll.setCycleCount(Timeline.INDEFINITE);
           fondoScroll.play(); // EJECUTAR EL TIMELINE
+          
+          
         
        
         
-      /* --- DIBUJO DEL PERSONAJE --- */
+      /* --- GRUPO PERSONAJE  --- */
         groupPersonaje = new Group();
         paneRoot.getChildren().add(groupPersonaje);
+        
+        /* --- GRUPO VAYAS --- */
+        groupVayas = new Group();
+        paneRoot.getChildren().add(groupVayas);
+        
         
         // Cuerpo
         Rectangle cuerpo = new Rectangle(48, 60, Color.ORANGE);
@@ -126,11 +138,61 @@ public class App extends Application {
         boca.setX(27);
         boca.setY(30);
         groupPersonaje.getChildren().add(boca);
-         //Movemos el personaje hacia la direccion que queramos
-        groupPersonaje.setLayoutX(posX);
-        groupPersonaje.setLayoutY(posY);
+        //Movemos el personaje hacia la direccion que queramos
+        groupPersonaje.setLayoutX(posXpersonaje);
+        groupPersonaje.setLayoutY(posYpersonaje);
         
-    
+        //Vayas
+        Rectangle vaya1 = new Rectangle(60, 10, Color.BLACK);
+        vaya1.setX(500);
+        vaya1.setY(25);
+        groupVayas.getChildren().add(vaya1);
+        
+        Rectangle paloIzquierdo = new Rectangle(10, 45, Color.BLACK);
+        paloIzquierdo.setX(500);
+        paloIzquierdo.setY(25);
+        groupVayas.getChildren().add(paloIzquierdo);
+        
+        Rectangle paloDerecho = new Rectangle(10, 45, Color.BLACK);
+        paloDerecho.setX(550);
+        paloDerecho.setY(25);
+        groupVayas.getChildren().add(paloDerecho);
+     
+        groupVayas.setLayoutX(posXvayas);
+        groupVayas.setLayoutY(posYvayas);
+        //Timeline de movimiento de las vayas
+        Timeline vayas = new Timeline(
+                new KeyFrame(Duration.seconds(0.004), (ActionEvent ae) -> {
+                    //Cambiar poscision pincho
+                    posXvayas -= 1;
+                    groupVayas.setLayoutX(posXvayas);
+                    if(posXvayas == -969) {
+                        posXvayas = 690;
+                    }
+                })
+        );
+        vayas.setCycleCount(Timeline.INDEFINITE);
+        vayas.play();
+        
+        //Salto del personaje
+        scene.setOnMouseClicked((MouseEvent mouseEvent) -> {
+            Timeline salto = new Timeline(new KeyFrame(Duration.seconds(0.004), (ActionEvent ae) -> {
+                    groupPersonaje.setLayoutY(300);
+                    posYpersonaje = 300;
+                    if (posYpersonaje == 300){
+                        
+                    ;}
+                })
+        );
+        salto.setCycleCount(Timeline.INDEFINITE);
+        salto.play();
+           
+        });
+        
+        
+         
+        
+     
         
     }
    
