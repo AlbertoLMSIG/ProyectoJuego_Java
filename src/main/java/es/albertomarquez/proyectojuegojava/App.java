@@ -20,7 +20,7 @@ public class App extends Application {
     
     double posXpersonaje = 100;
     double posYpersonaje = 364;
-    double posXvayas = 100;
+    double posXvayas = 969;
     double posYvayas = 364;
     Group groupPersonaje;
     Group groupVayas;
@@ -144,40 +144,44 @@ public class App extends Application {
         
         //Vayas
         Rectangle vaya1 = new Rectangle(60, 10, Color.BLACK);
-        vaya1.setX(500);
+        vaya1.setX(0);
         vaya1.setY(25);
         groupVayas.getChildren().add(vaya1);
         
         Rectangle paloIzquierdo = new Rectangle(10, 45, Color.BLACK);
-        paloIzquierdo.setX(500);
+        paloIzquierdo.setX(0);
         paloIzquierdo.setY(25);
         groupVayas.getChildren().add(paloIzquierdo);
         
         Rectangle paloDerecho = new Rectangle(10, 45, Color.BLACK);
-        paloDerecho.setX(550);
+        paloDerecho.setX(50);
         paloDerecho.setY(25);
         groupVayas.getChildren().add(paloDerecho);
      
         groupVayas.setLayoutX(posXvayas);
         groupVayas.setLayoutY(posYvayas);
+        
         //Timeline de movimiento de las vayas
         Timeline vayas = new Timeline(
-                new KeyFrame(Duration.seconds(0.004), (ActionEvent ae) -> {
-                    posXvayas -= 1;
+                new KeyFrame(Duration.seconds(0.017), (ActionEvent ae) -> {
+                    posXvayas -= 7;
                     groupVayas.setLayoutX(posXvayas);
-                    if(posXvayas == -969) {
-                        posXvayas = 690;
+                    System.out.println(posXvayas);
+                    if(posXvayas == -60) {
+                        posXvayas = 969;
+                       
                     }
                 })
         );
         vayas.setCycleCount(Timeline.INDEFINITE);
-        vayas.play();
+        vayas.play(); 
         
         //Salto del personaje
         scene.setOnMouseClicked((MouseEvent mouseEvent) -> {
             Timeline salto = new Timeline(new KeyFrame(Duration.seconds(0.004), (ActionEvent ae) -> {
                     groupPersonaje.setLayoutY(300);
                     posYpersonaje = 300;
+                    System.out.println(posYpersonaje);
                     if (posYpersonaje == 300){
                         
                     ;}
