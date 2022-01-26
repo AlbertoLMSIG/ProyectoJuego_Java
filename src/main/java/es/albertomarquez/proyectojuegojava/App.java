@@ -4,15 +4,19 @@ import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
+import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.shape.Shape;
+import javafx.scene.text.Font;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
@@ -28,7 +32,10 @@ public class App extends Application {
     int imagenFondo2X = 969;
     ImageView imgfondo1;
     ImageView imgfondo2;
-    int JUMP_SPEED = 0;
+    int JUMP_SPEED = 4;
+    Text textScore;
+    final int TEXT_SIZE = 24;
+    int score;
     
     
     @Override
@@ -71,7 +78,27 @@ public class App extends Application {
           fondoScroll.play(); // EJECUTAR EL TIMELINE
           
           
-        
+        //Layout principal
+          HBox paneScores = new HBox();
+          paneScores. setTranslateY(20) ;
+          paneScores. setAlignment (Pos.CENTER) ;
+          paneScores. setSpacing(100) ;
+          paneRoot.getChildren().add(paneScores) ;
+
+          //Layout para puntuacién actual
+          HBox paneCurrentScore = new HBox();
+          paneCurrentScore. setSpacing(10) ;
+          paneScores.getChildren().add(paneCurrentScore) ;
+          //Texto de etiqueta para los salto de las vayas
+          Text textTitleScore = new Text("Vayas saltadas:");
+          textTitleScore.setFont(Font.font(TEXT_SIZE));
+          textTitleScore.setFill(Color.BLACK);
+          //Texto para la puntuacion
+          Text textScore = new Text("0");
+          textScore. setFont (Font. font (TEXT_SIZE));
+          textScore. setFill(Color.BLACK) ;
+          paneCurrentScore.getChildren().add(textTitleScore) ;
+          paneCurrentScore.getChildren().add(textScore) ;
        
         
       /* --- GRUPO PERSONAJE  --- */
@@ -166,32 +193,28 @@ public class App extends Application {
                 new KeyFrame(Duration.seconds(0.017), (ActionEvent ae) -> {
                     posXvayas -= 7;
                     groupVayas.setLayoutX(posXvayas);
-                    System.out.println(posXvayas);
+                    //System.out.println(posXvayas);
                     if(posXvayas == -60) {
-                        posXvayas = 969;
-                       
+                        posXvayas = 969;   
                     }
-                })
+                    
+        Shape shapeColision = Shape.intersect(brazoDerecha,paloIzquierdo);
+        boolean colisionVacia = shapeColision.getBoundsInLocal().isEmpty();
+        if(colisionVacia == false){
+            posXvayas = 969;
+            groupVayas.setLayoutX(posXvayas);
+            System.out.println(posXvayas);
+            score++;
+            textScore.setText(String.valueOf(score));
+        } else if (score == 3){
+        System.out.println("Has ganado");}
+    })
         );
         vayas.setCycleCount(Timeline.INDEFINITE);
         vayas.play(); 
-        
-        //Salto del personaje
-        scene.setOnMouseClicked((MouseEvent mouseEvent) -> {
-            Timeline salto = new Timeline(new KeyFrame(Duration.seconds(0.004), (ActionEvent ae) -> {
-                    groupPersonaje.setLayoutY(300);
-                    posYpersonaje = 300;
-                    System.out.println(posYpersonaje);
-                    if (posYpersonaje == 300){
-                        
-                    ;}
-                })
-        );
-        salto.setCycleCount(Timeline.INDEFINITE);
-        salto.play();
-           
-        });
-        
+    
+    
+               
         
          
         
@@ -205,3 +228,4 @@ public class App extends Application {
     }
 
 }
+
