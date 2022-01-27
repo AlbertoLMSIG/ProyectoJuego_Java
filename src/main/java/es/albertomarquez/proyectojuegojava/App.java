@@ -7,8 +7,11 @@ import javafx.event.ActionEvent;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.Scene;
+import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
@@ -16,12 +19,14 @@ import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
 import javafx.scene.text.Font;
+import javafx.scene.text.FontPosture;
+import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
-public class App extends Application {
-    
+public class App extends Application {  
+ 
     double posXpersonaje = 100;
     double posYpersonaje = 364;
     double posXvayas = 969;
@@ -32,34 +37,34 @@ public class App extends Application {
     int imagenFondo2X = 969;
     ImageView imgfondo1;
     ImageView imgfondo2;
-    int JUMP_SPEED = 4;
+    int velPersonaje = -4;
     Text textScore;
     final int TEXT_SIZE = 24;
     int score;
-    
-    
+    boolean finPartida = false;
+ 
     @Override
     public void start(Stage stage) {
         imgfondo1 = new ImageView();
         imgfondo2 = new ImageView();
        
-        // Panel principal que contendrá los elementos de la pantalla
+        // Panel principal que contendrá los elementos de la pantalla  
         Pane paneRoot = new Pane();
         var scene = new Scene(paneRoot, 969, 480);        
         stage.setScene(scene);
         stage.show();
-        paneRoot.getChildren().add(imgfondo1); 
+        paneRoot.getChildren().add(imgfondo1);
         paneRoot.getChildren().add(imgfondo2);
         imgfondo1.setLayoutX(imagenFondo1X);
         imgfondo2.setLayoutX(imagenFondo2X);
-        
+       
         // Cargar la imagen crear objeto ImageView
         Image img = new Image(getClass().getResourceAsStream("/images/mapa_def.jpg"));
         imgfondo1 = new ImageView(img);
         paneRoot.getChildren().add(imgfondo1);
         imgfondo2 = new ImageView(img);
         paneRoot.getChildren().add(imgfondo2);
-        
+       
         //Desplazar la pantala ala izquierda
         Timeline fondoScroll = new Timeline(
                   new KeyFrame(Duration.seconds(0.007), (ActionEvent ae) -> {
@@ -76,8 +81,8 @@ public class App extends Application {
           );
           fondoScroll.setCycleCount(Timeline.INDEFINITE);
           fondoScroll.play(); // EJECUTAR EL TIMELINE
-          
-          
+         
+         
         //Layout principal
           HBox paneScores = new HBox();
           paneScores. setTranslateY(20) ;
@@ -100,16 +105,16 @@ public class App extends Application {
           paneCurrentScore.getChildren().add(textTitleScore) ;
           paneCurrentScore.getChildren().add(textScore) ;
        
-        
+       
       /* --- GRUPO PERSONAJE  --- */
         groupPersonaje = new Group();
         paneRoot.getChildren().add(groupPersonaje);
-        
+       
         /* --- GRUPO VAYAS --- */
         groupVayas = new Group();
         paneRoot.getChildren().add(groupVayas);
-        
-        
+       
+       
         // Cuerpo
         Rectangle cuerpo = new Rectangle(48, 60, Color.ORANGE);
         cuerpo.setX(20);
@@ -124,14 +129,14 @@ public class App extends Application {
         piernaIzquierda.setArcWidth(10);
         piernaIzquierda.setArcHeight(10);
         groupPersonaje.getChildren().add(piernaIzquierda);
-        
+       
         Rectangle piernaDerecha = new Rectangle(10, 20, Color.ORANGE);
         piernaDerecha.setX(57);
         piernaDerecha.setY(50);
         piernaDerecha.setArcWidth(10);
         piernaDerecha.setArcHeight(10);
         groupPersonaje.getChildren().add(piernaDerecha);
-        
+       
         //BrazosI
         Rectangle brazoDerecha = new Rectangle(10, 30, Color.ORANGE);
         brazoDerecha.setX(15);
@@ -140,7 +145,7 @@ public class App extends Application {
         brazoDerecha.setArcWidth(8);
         brazoDerecha.setArcHeight(8);
         groupPersonaje.getChildren().add(brazoDerecha);
-        
+       
         //BrazosD
         Rectangle brazoIzquierda = new Rectangle(10, 30, Color.ORANGE);
         brazoIzquierda.setX(62);
@@ -149,7 +154,7 @@ public class App extends Application {
         brazoIzquierda.setArcHeight(8);
         brazoIzquierda.setRotate(-40);
         groupPersonaje.getChildren().add(brazoIzquierda);
-        
+       
         // OjoD
         Circle ojoD = new Circle(5, Color.BLACK);
         ojoD.setCenterX(57);
@@ -168,18 +173,18 @@ public class App extends Application {
         //Movemos el personaje hacia la direccion que queramos
         groupPersonaje.setLayoutX(posXpersonaje);
         groupPersonaje.setLayoutY(posYpersonaje);
-        
+       
         //Vayas
         Rectangle vaya1 = new Rectangle(60, 10, Color.BLACK);
         vaya1.setX(0);
         vaya1.setY(25);
         groupVayas.getChildren().add(vaya1);
-        
+       
         Rectangle paloIzquierdo = new Rectangle(10, 45, Color.BLACK);
         paloIzquierdo.setX(0);
         paloIzquierdo.setY(25);
         groupVayas.getChildren().add(paloIzquierdo);
-        
+       
         Rectangle paloDerecho = new Rectangle(10, 45, Color.BLACK);
         paloDerecho.setX(50);
         paloDerecho.setY(25);
@@ -188,38 +193,87 @@ public class App extends Application {
         groupVayas.setLayoutX(posXvayas);
         groupVayas.setLayoutY(posYvayas);
         
+        //MOVIMIENTO PERSONAJE
+        scene.setOnKeyPressed((KeyEvent event) -> {
+                if(event.getCode() == KeyCode.UP && posYpersonaje == 364) {
+                        velPersonaje = -4;
+                        score++;
+                        textScore.setText(String.valueOf(score)); 
+                        System.out.println("PULSAS ARRIBA");        
+              }
+                });
+       Timeline movSalto = new Timeline(
+                new KeyFrame(Duration.seconds(0.017), (ActionEvent ae) ->{
+                posYpersonaje += velPersonaje;
+                groupPersonaje.setLayoutY(posYpersonaje);
+                if (posYpersonaje <= 300){
+                    velPersonaje = 4;                
+                }
+                if (posYpersonaje == 364){
+                velPersonaje = 0;
+                }
+                })); 
+        movSalto.setCycleCount(Timeline.INDEFINITE);
+        movSalto.play();
+     
         //Timeline de movimiento de las vayas
-        Timeline vayas = new Timeline(
-                new KeyFrame(Duration.seconds(0.017), (ActionEvent ae) -> {
-                    posXvayas -= 7;
-                    groupVayas.setLayoutX(posXvayas);
-                    //System.out.println(posXvayas);
-                    if(posXvayas == -60) {
-                        posXvayas = 969;   
-                    }
-                    
-        Shape shapeColision = Shape.intersect(brazoDerecha,paloIzquierdo);
+    Timeline vayas = new Timeline(
+        new KeyFrame(Duration.seconds(0.017), (ActionEvent ae) -> {
+                posXvayas -= 7;
+                groupVayas.setLayoutX(posXvayas);
+                //System.out.println(posXvayas);
+                if(posXvayas == -60) {
+                    posXvayas = 969;  
+                }
+    })
+    );
+        vayas.setCycleCount(Timeline.INDEFINITE);
+        vayas.play();
+        
+   
+    
+       
+    Timeline colision = new Timeline (
+            new KeyFrame(Duration.seconds(0.017),(ActionEvent ae) -> {
+            Shape shapeColision = Shape.intersect(brazoDerecha,paloIzquierdo);
         boolean colisionVacia = shapeColision.getBoundsInLocal().isEmpty();
         if(colisionVacia == false){
+            vayas.stop();
+            fondoScroll.stop();
             posXvayas = 969;
             groupVayas.setLayoutX(posXvayas);
             System.out.println(posXvayas);
-            score++;
-            textScore.setText(String.valueOf(score));
-        } else if (score == 3){
-        System.out.println("Has ganado");}
-    })
+            finPartida = true;
+        } else if (finPartida == true){
+                System.out.println(finPartida);
+                textTitleScore.setFill(Color.TRANSPARENT);
+                textScore. setFill(Color.TRANSPARENT) ;
+                Label labelfinal = new Label("Has saltado un total de "+score+" vayas");
+                Font font = Font.font("Bahnschrift", FontWeight.BLACK, FontPosture.REGULAR, 25);
+                labelfinal.setFont(font);
+                labelfinal.setTextFill(Color.BLACK);
+                labelfinal.setTranslateX(300);
+                labelfinal.setTranslateY(200);
+                paneRoot.getChildren().add(labelfinal);
+   
+           
+    }
+       
+        })
         );
-        vayas.setCycleCount(Timeline.INDEFINITE);
-        vayas.play(); 
-    
-    
-               
-        
-         
-        
+        colision.setCycleCount(Timeline.INDEFINITE);
+        colision.play();    
+       
+   
      
-        
+       
+   
+               
+       
+         
+       
+     
+       
     }
    
 
@@ -228,4 +282,3 @@ public class App extends Application {
     }
 
 }
-
