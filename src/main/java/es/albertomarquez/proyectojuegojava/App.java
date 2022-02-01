@@ -38,7 +38,11 @@ public class App extends Application {
     ImageView imgfondo1;
     ImageView imgfondo2;
     ImageView imgPajaro1;
+    ImageView imgPajaro2;
+    ImageView imgGusano;
     int imgPajaro1X = 969;
+    int imgPajaro2X = - 160;
+    int gusanoX = 969;
     int velPersonaje = -4;
     Text textScore;
     final int TEXT_SIZE = 24;
@@ -54,7 +58,8 @@ public class App extends Application {
         imgfondo1 = new ImageView();
         imgfondo2 = new ImageView();
         imgPajaro1 = new ImageView();
-        
+        imgPajaro2 = new ImageView();
+        imgGusano = new ImageView();
 /*---------------------------------------------------------------------------------*/                      
 /*------ PANEL PRINCIPAL QUE CONTENDRA LOS ELEMENTOS DE LA PANTALLA ------*/  
         Pane paneRoot = new Pane();
@@ -64,11 +69,10 @@ public class App extends Application {
         paneRoot.getChildren().add(imgfondo1);
         paneRoot.getChildren().add(imgfondo2);
         paneRoot.getChildren().add(imgPajaro1);
+        paneRoot.getChildren().add(imgPajaro2);
+        paneRoot.getChildren().add(imgGusano);
         imgfondo1.setLayoutX(imagenFondo1X);
-        imgfondo2.setLayoutX(imagenFondo2X);
-        imgPajaro1.setLayoutX(imgPajaro1X);
-        imgPajaro1.setLayoutY(250);
-        
+        imgfondo2.setLayoutX(imagenFondo2X);        
 /*---------------------------------------------------------------------------------*/      
 /*------ CREAR OBJETO ImageView ------*/
         Image img = new Image(getClass().getResourceAsStream("/images/mapa_def.jpg"));
@@ -79,6 +83,18 @@ public class App extends Application {
         Image img2 = new Image(getClass().getResourceAsStream("/images/pajaro1.gif"));
         imgPajaro1 = new ImageView(img2);
         paneRoot.getChildren().add(imgPajaro1);
+        imgPajaro1.setLayoutX(imgPajaro1X);
+        imgPajaro1.setLayoutY(130);
+        Image img3 = new Image(getClass().getResourceAsStream("/images/pp.gif"));
+        imgPajaro2 = new ImageView(img3);
+        paneRoot.getChildren().add(imgPajaro2);
+        imgPajaro2.setLayoutX(imgPajaro2X);
+        imgPajaro2.setLayoutY(40);
+        Image img4 = new Image(getClass().getResourceAsStream("/images/gusano.gif"));
+        imgGusano = new ImageView(img4);
+        paneRoot.getChildren().add(imgGusano);
+        imgGusano.setLayoutX(gusanoX);
+        imgGusano.setLayoutY(425);
 /*---------------------------------------------------------------------------------*/         
 /*------ FONDO SCROLL INFINITO ------*/
         Timeline fondoScroll = new Timeline(                
@@ -98,18 +114,44 @@ public class App extends Application {
         fondoScroll.play(); // EJECUTAR EL TIMELINE
 /*---------------------------------------------------------------------------------*/         
 /*------ PERSONAJES SECUNDARIOS SCROLL INFINITO ------*/ 
-        Timeline PAJARO1 = new Timeline(                
+        Timeline Pajaro1 = new Timeline(                
                 new KeyFrame(Duration.seconds(0.007), (ActionEvent ae) -> {                      
                     imgPajaro1X = imgPajaro1X - 3;
                     imgPajaro1.setLayoutX(imgPajaro1X);
-                    if (imgPajaro1X <= -60) {  
+                    if (imgPajaro1X <= -160) {  
                         imgPajaro1X = 969;
                       }
         
         })
         );
-        PAJARO1.setCycleCount(Timeline.INDEFINITE);
-        PAJARO1.play();
+        Pajaro1.setCycleCount(Timeline.INDEFINITE);
+        Pajaro1.play();
+        
+        Timeline Pajaro2 = new Timeline(                
+                new KeyFrame(Duration.seconds(0.007), (ActionEvent ae) -> {                      
+                    imgPajaro2X = imgPajaro2X + 2;
+                    imgPajaro2.setLayoutX(imgPajaro2X);
+                    if (imgPajaro2X >= 1000) {  
+                        imgPajaro2X = -160;
+                      }
+        
+        })
+        );
+        Pajaro2.setCycleCount(Timeline.INDEFINITE);
+        Pajaro2.play(); 
+        
+        Timeline gusano = new Timeline(                
+                new KeyFrame(Duration.seconds(0.007), (ActionEvent ae) -> {                      
+                    gusanoX = gusanoX - 1;
+                    imgGusano.setLayoutX(gusanoX);
+                    if (gusanoX <= -160) {  
+                        gusanoX = 969;
+                      }
+        
+        })
+        );
+        gusano.setCycleCount(Timeline.INDEFINITE);
+        gusano.play();
 /*---------------------------------------------------------------------------------*/                       
 /*------ LAYOUT PRINCIPAL ------*/
         HBox paneScores = new HBox();
@@ -222,8 +264,11 @@ public class App extends Application {
                     groupVayas.setLayoutX(posXvayas);
                     //System.out.println(posXvayas);
                         if(posXvayas <= -63) {                            
-                            posXvayas = 969;                         
-                        }                                            
+                            posXvayas = 969;
+                            score++;
+                            textScore.setText(String.valueOf(score)); 
+                            System.out.println("PULSAS ARRIBA"); 
+                        }                                         
                 })            
         );            
         vayas.setCycleCount(Timeline.INDEFINITE);
@@ -234,9 +279,7 @@ public class App extends Application {
             if(event.getCode() == KeyCode.UP && posYpersonaje == 364) {
                 velVallas = velVallas + 0.5;
                 velPersonaje = -4;
-                score++;
-                textScore.setText(String.valueOf(score)); 
-                System.out.println("PULSAS ARRIBA");              
+                             
             }                
         });
        
@@ -267,6 +310,7 @@ public class App extends Application {
                         groupVayas.setLayoutX(posXvayas);
                         System.out.println(posXvayas);
                         finPartida = true;
+                        
                     } else if (finPartida == true){
                         System.out.println(finPartida);
                         textTitleScore.setFill(Color.TRANSPARENT);
@@ -278,6 +322,7 @@ public class App extends Application {
                         labelfinal.setTranslateX(300);
                         labelfinal.setTranslateY(200);
                         paneRoot.getChildren().add(labelfinal);
+                       
                     }               
                 })        
         );        
@@ -285,7 +330,8 @@ public class App extends Application {
         colision.play();           
     }
    
-
+    
+    
     public static void main(String[] args) {
         launch();
     }
