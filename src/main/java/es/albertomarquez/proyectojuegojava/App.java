@@ -49,6 +49,12 @@ public class App extends Application {
     int score;
     boolean finPartida = false;
     double velVallas = 4;
+    Timeline vayas;
+    Timeline fondoScroll;
+    Label labelfinal;
+    Timeline movSalto;
+    boolean reinicioPartida = false;
+    Pane paneRoot = new Pane();
     
     
 /*---------------------------------------------------------------------------------*/      
@@ -62,7 +68,7 @@ public class App extends Application {
         imgGusano = new ImageView();
 /*---------------------------------------------------------------------------------*/                      
 /*------ PANEL PRINCIPAL QUE CONTENDRA LOS ELEMENTOS DE LA PANTALLA ------*/  
-        Pane paneRoot = new Pane();
+        
         var scene = new Scene(paneRoot, 969, 480);        
         stage.setScene(scene);
         stage.show();
@@ -315,25 +321,48 @@ public class App extends Application {
                         System.out.println(finPartida);
                         textTitleScore.setFill(Color.TRANSPARENT);
                         textScore. setFill(Color.TRANSPARENT) ;
-                        Label labelfinal = new Label("Has saltado un total de "+score+" vallas");
+                        labelfinal = new Label("Has saltado un total de "+score+" vallas");
                         Font font = Font.font("Bahnschrift", FontWeight.BLACK, FontPosture.REGULAR, 25);
                         labelfinal.setFont(font);
                         labelfinal.setTextFill(Color.BLACK);
                         labelfinal.setTranslateX(300);
                         labelfinal.setTranslateY(200);
-                        paneRoot.getChildren().add(labelfinal);
-                       
+                        paneRoot.getChildren().add(labelfinal);    
+                        reinicioPartida = true;
+                        if (reinicioPartida == true)
+                        {                          
+                            scene.setOnKeyPressed((KeyEvent event) -> {                                            
+                                if(event.getCode() == KeyCode.LEFT) {
+                                     vayas.play();
+                                     fondoScroll.play();
+                                     posXpersonaje = 100;
+                                     posYpersonaje = 364;
+                                     posXvayas = 969;
+                                     posYvayas = 364;
+                                     imagenFondo1X = 0;
+                                     imagenFondo2X = 969;                                    
+                                     imgPajaro1X = 969;
+                                     imgPajaro2X = - 160;
+                                     gusanoX = 969;
+                                     velPersonaje = -4;
+                                     int score;
+                                     finPartida = false;
+                                     velVallas = 4;
+                                     reinicioPartida = false;
+                                     
+                                }                        
+                            });                      
+                        }  
                     }               
                 })        
         );        
         colision.setCycleCount(Timeline.INDEFINITE);
-        colision.play();           
+        colision.play();                      
     }
-   
-    
     
     public static void main(String[] args) {
         launch();
     }
 
 }
+ 
