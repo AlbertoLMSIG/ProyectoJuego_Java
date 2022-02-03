@@ -56,13 +56,12 @@ public class App extends Application {
     Timeline Pajaro2;
     Label labelfinal;
     Pane paneRoot = new Pane();
-    HBox panefinal;
     HBox paneScores;
     HBox paneCurrentScore;
     Text textTitleScore;
     Text textScore;
     Text textFinal;
-
+    
 /*---------------------------------------------------------------------------------*/      
     @Override
     public void start(Stage stage) {         
@@ -72,14 +71,8 @@ public class App extends Application {
 /*------ PANEL PRINCIPAL QUE CONTENDRA LOS ELEMENTOS DE LA PANTALLA ------*/     
         var scene = new Scene(paneRoot, 969, 480);        
         stage.setScene(scene);
-        stage.show();
-        paneRoot.getChildren().add(imgfondo1);
-        paneRoot.getChildren().add(imgfondo2);
-        paneRoot.getChildren().add(imgPajaro1);
-        paneRoot.getChildren().add(imgPajaro2);
-        paneRoot.getChildren().add(imgGusano);
-        imgfondo1.setLayoutX(imagenFondo1X);
-        imgfondo2.setLayoutX(imagenFondo2X);        
+        stage.show(); 
+        panelPrincipal();
 /*---------------------------------------------------------------------------------*/      
 /*------ CREAR OBJETO ImageView ------*/
         imagenes();
@@ -90,32 +83,8 @@ public class App extends Application {
 /*------ PERSONAJES SECUNDARIOS SCROLL INFINITO ------*/ 
         persSecundarioScroll();
 /*---------------------------------------------------------------------------------*/                       
-/*------ LAYOUT PRINCIPAL ------*/
-        paneScores = new HBox();
-        paneScores. setTranslateY(20) ;
-        paneScores. setAlignment (Pos.CENTER) ;
-        paneScores. setSpacing(100) ;
-        paneRoot.getChildren().add(paneScores) ;
-/*------ LAYOUT PUNTUACION ACTUAL ------*/
-        paneCurrentScore = new HBox();
-        paneCurrentScore. setSpacing(10) ;
-        paneScores.getChildren().add(paneCurrentScore) ;
-/*------ TEXTO PARA CUANDO EL PERSONAJE SALTE LAS VALLAS ------*/
-        textTitleScore = new Text("Vallas saltadas:");
-        textTitleScore.setFont(Font.font(TEXT_SIZE));
-        textTitleScore.setFill(Color.BLACK);
-/*------ TEXTO PARA EL NUMERO DE PUNTOS CONSEGUIDOS ------*/
-        textScore = new Text("0");
-        textScore. setFont (Font. font (TEXT_SIZE));
-        textScore. setFill(Color.BLACK) ;
-        paneCurrentScore.getChildren().add(textTitleScore) ;
-        paneCurrentScore.getChildren().add(textScore) ;
-/*---------------------------------------------------------------------------------*/ 
-        panefinal = new HBox();
-        panefinal.setTranslateY(200) ;
-        panefinal.setTranslateX(300) ;
-        panefinal.setAlignment (Pos.CENTER) ;
-        panefinal.setSpacing(100) ;
+/*------ TITULOS HBOX ------*/         
+        elementosHBox();
 /*---------------------------------------------------------------------------------*/ 
 /*----- GRUPO PERSONAJE ----- */
         groupPersonaje = new Group();
@@ -197,35 +166,13 @@ public class App extends Application {
         paloDerecho.setY(25);
         groupVayas.getChildren().add(paloDerecho);
 /*------ POSICION DE LA VALLA ------*/     
-        groupVayas.setLayoutX(posXvayas);
-        groupVayas.setLayoutY(posYvayas);
+        posicionValla();
 /*---------------------------------------------------------------------------------*/           
 /*------ MOVIMIENTO INFINITO DE LA VALLA ------*/        
          movVallas();
 /*---------------------------------------------------------------------------------*/           
-/*------ MOVIMIENTO DE SALTO DEL PERSONAJE ------*/        
-        scene.setOnKeyPressed((KeyEvent event) -> {                
-            if(event.getCode() == KeyCode.UP && posYpersonaje == 364) {
-                velVallas = velVallas + 0.5;
-                velPersonaje = -4;
-                             
-            }                
-        });
-       
-        movSalto = new Timeline(
-                new KeyFrame(Duration.seconds(0.017), (ActionEvent ae) ->{
-                posYpersonaje += velPersonaje;
-                groupPersonaje.setLayoutY(posYpersonaje);                
-                if (posYpersonaje <= 270){                    
-                    velPersonaje = 4;                
-                }                
-                if (posYpersonaje == 364){
-                velPersonaje = 0;                
-                }                
-            })
-        ); 
-        movSalto.setCycleCount(Timeline.INDEFINITE);
-        movSalto.play();
+/*------ MOVIMIENTO DE SALTO DEL PERSONAJE ------*/           
+        saltoPersonaje(scene);      
 /*---------------------------------------------------------------------------------*/
 /*------ DETECTAR COLISION PEROSNAJE/VAYA  ------*/          
         colision = new Timeline (           
@@ -233,64 +180,9 @@ public class App extends Application {
                     Shape shapeColision = Shape.intersect(brazoDerecha,paloIzquierdo);        
                     boolean colisionVacia = shapeColision.getBoundsInLocal().isEmpty();        
                     if(colisionVacia == false){            
-                        vayas.stop();
-                        fondoScroll.stop();
-                        gusano.stop();
-                        Pajaro1.stop();
-                        Pajaro2.stop();
-                        posXvayas = 969;
-                        gusanoX = 969;
-                        imgPajaro1X = 969;
-                        imgPajaro2X = -160;
-                        groupVayas.setLayoutX(posXvayas);
-                        imgGusano.setLayoutX(gusanoX);
-                        imgPajaro1.setLayoutX(imgPajaro1X);
-                        imgPajaro2.setLayoutX(imgPajaro2X);
-                        System.out.println(posXvayas);
-                        finPartida = true;                       
-                    } else if (finPartida == true){
-                       // System.out.println(finPartida);
-                        textTitleScore.setFill(Color.TRANSPARENT);
-                        textScore. setFill(Color.TRANSPARENT) ;    
-                        paneRoot.getChildren().add(panefinal) ; 
-                        textFinal = new Text("Has saltado un total de: "+score+" vallas");
-                        textFinal. setFont (Font. font (TEXT_SIZE));
-                        textFinal. setFill(Color.BLACK) ;
-                        panefinal.getChildren().add(textFinal) ;
-//                        labelfinal = new Label("Has saltado un total de "+score+" vallas");
-//                        Font font = Font.font("Bahnschrift", FontWeight.BLACK, FontPosture.REGULAR, 25);
-//                        labelfinal.setFont(font);
-//                        labelfinal.setTextFill(Color.BLACK);
-//                        labelfinal.setTranslateX(300);
-//                        labelfinal.setTranslateY(200);
-//                        paneRoot.getChildren().add(labelfinal);    
-                        reinicioPartida = true;
-                        if (reinicioPartida == true){
-                            scene.setOnKeyPressed((KeyEvent event) -> {                                            
-                                if(event.getCode() == KeyCode.LEFT) {
-                                    System.out.println("pUSLA LEFT");
-                                    textFinal.setFill(Color.TRANSPARENT);                                   
-                                    vayas.play();
-                                    fondoScroll.play();
-                                    gusano.play();
-                                    Pajaro1.play();
-                                    Pajaro2.play();                                 
-                                    posXpersonaje = 100;
-                                    posYpersonaje = 364;
-                                    posXvayas = 969;
-                                    posYvayas = 364;
-                                    velVallas = 4;
-                                    imagenFondo1X = 0;
-                                    imagenFondo2X = 969;
-                                    imgPajaro1X = 969;
-                                    imgPajaro2X = - 160;
-                                    gusanoX = 969;
-                                    velPersonaje = -4;
-                                    reinicioPartida = false;
-                                    finPartida = false;
-                                }                        
-                            });                      
-                        }  
+                        finPartida1();               
+                    }else if (finPartida == true){
+                        finPartida2();                        
                     }               
                 })        
         );        
@@ -400,5 +292,123 @@ public class App extends Application {
         );            
         vayas.setCycleCount(Timeline.INDEFINITE);
         vayas.play();}
+    public void panelPrincipal(){
+        paneRoot.getChildren().add(imgfondo1);
+        paneRoot.getChildren().add(imgfondo2);
+        paneRoot.getChildren().add(imgPajaro1);
+        paneRoot.getChildren().add(imgPajaro2);
+        paneRoot.getChildren().add(imgGusano);
+        imgfondo1.setLayoutX(imagenFondo1X);
+        imgfondo2.setLayoutX(imagenFondo2X);     
+    }
+    public void saltoPersonaje(Scene scene){
+        scene.setOnKeyPressed((KeyEvent event) -> {                
+            if(event.getCode() == KeyCode.UP && posYpersonaje == 364) {
+                velVallas = velVallas + 0.5;
+                velPersonaje = -4;                 
+            }
+            if (reinicioPartida == true){
+                if(event.getCode() == KeyCode.DOWN) {
+                textFinal.setFill(Color.TRANSPARENT);
+                velVallas = velVallas + 0.5;
+                velPersonaje = -4;
+                System.out.println("pUSLA LEFT");            
+                vayas.play();
+                fondoScroll.play();
+                gusano.play();
+                Pajaro1.play();
+                Pajaro2.play();                                 
+                posXpersonaje = 100;
+                posYpersonaje = 364;
+                posXvayas = 969;
+                posYvayas = 364;
+                velVallas = 4;
+                imagenFondo1X = 0;
+                imagenFondo2X = 969;
+                imgPajaro1X = 969;
+                imgPajaro2X = - 160;
+                gusanoX = 969;
+                reinicioPartida = false;
+                finPartida = false;
+            }
+            }
+        });
+        
+         movSalto = new Timeline(
+                new KeyFrame(Duration.seconds(0.017), (ActionEvent ae) ->{
+                posYpersonaje += velPersonaje;
+                groupPersonaje.setLayoutY(posYpersonaje);                
+                if (posYpersonaje <= 270){                    
+                    velPersonaje = 4;                
+                }                
+                if (posYpersonaje == 364){
+                velPersonaje = 0;                
+                }                
+            })
+        ); 
+        movSalto.setCycleCount(Timeline.INDEFINITE);
+        movSalto.play();
+        
+    }
+    public void posicionValla(){
+        groupVayas.setLayoutX(posXvayas);
+        groupVayas.setLayoutY(posYvayas);
+    }
+    public void elementosHBox(){
+        /*------ LAYOUT PRINCIPAL ------*/
+        paneScores = new HBox();
+        paneScores. setTranslateY(20) ;
+        paneScores. setAlignment (Pos.CENTER) ;
+        paneScores. setSpacing(100) ;
+        paneRoot.getChildren().add(paneScores) ;
+/*------ LAYOUT PUNTUACION ACTUAL ------*/
+        paneCurrentScore = new HBox();
+        paneCurrentScore. setSpacing(10) ;
+        paneScores.getChildren().add(paneCurrentScore) ;
+/*------ TEXTO PARA CUANDO EL PERSONAJE SALTE LAS VALLAS ------*/
+        textTitleScore = new Text("Vallas saltadas:");
+        textTitleScore.setFont(Font.font(TEXT_SIZE));
+        textTitleScore.setFill(Color.BLACK);
+/*------ TEXTO PARA EL NUMERO DE PUNTOS CONSEGUIDOS ------*/
+        textScore = new Text("0");
+        textScore. setFont (Font. font (TEXT_SIZE));
+        textScore. setFill(Color.BLACK) ;
+        paneCurrentScore.getChildren().add(textTitleScore) ;
+        paneCurrentScore.getChildren().add(textScore) ;
+/*---------------------------------------------------------------------------------*/ 
+    }
+    public void finPartida1(){
+                        vayas.stop();
+                        fondoScroll.stop();
+                        gusano.stop();
+                        Pajaro1.stop();
+                        Pajaro2.stop();
+                        posXvayas = 969;
+                        gusanoX = 969;
+                        imgPajaro1X = 969;
+                        imgPajaro2X = -160;
+                        groupVayas.setLayoutX(posXvayas);
+                        imgGusano.setLayoutX(gusanoX);
+                        imgPajaro1.setLayoutX(imgPajaro1X);
+                        imgPajaro2.setLayoutX(imgPajaro2X);
+                        System.out.println(posXvayas);
+                        
+                        finPartida = true;     
+    }
+    public void finPartida2(){
+        // System.out.println(finPartida);
+        textTitleScore.setFill(Color.TRANSPARENT);
+        textScore. setFill(Color.TRANSPARENT) ;
+        HBox panefinal = new HBox();
+        panefinal.setTranslateY(200) ;
+        panefinal.setTranslateX(300) ;
+        panefinal.setAlignment (Pos.CENTER) ;
+        panefinal.setSpacing(100) ;
+        textFinal = new Text("Has saltado un total de: "+score+" vallas");
+        textFinal. setFont (Font. font (TEXT_SIZE));
+        textFinal. setFill(Color.BLACK) ;
+        paneRoot.getChildren().add(panefinal) ;
+        panefinal.getChildren().add(textFinal) ;   
+        reinicioPartida = true;
+    }
 }
- 
