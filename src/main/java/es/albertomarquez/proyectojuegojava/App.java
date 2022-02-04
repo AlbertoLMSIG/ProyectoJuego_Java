@@ -58,10 +58,11 @@ public class App extends Application {
     Pane paneRoot = new Pane();
     HBox paneScores;
     HBox paneCurrentScore;
+    HBox paneAbajo;
     Text textTitleScore;
     Text textScore;
     Text textFinal;
-    
+    Text textAbajo;
 /*---------------------------------------------------------------------------------*/      
     @Override
     public void start(Stage stage) {         
@@ -181,9 +182,7 @@ public class App extends Application {
                     boolean colisionVacia = shapeColision.getBoundsInLocal().isEmpty();        
                     if(colisionVacia == false){            
                         finPartida1();               
-                    }else if (finPartida == true){
-                        finPartida2();                        
-                    }               
+                    }       
                 })        
         );        
         colision.setCycleCount(Timeline.INDEFINITE);
@@ -310,9 +309,10 @@ public class App extends Application {
             if (reinicioPartida == true){
                 if(event.getCode() == KeyCode.DOWN) {
                 textFinal.setFill(Color.TRANSPARENT);
+                textAbajo.setFill(Color.TRANSPARENT);
                 velVallas = velVallas + 0.5;
                 velPersonaje = -4;
-                System.out.println("pUSLA LEFT");            
+                System.out.println("pUSLA abajo");            
                 vayas.play();
                 fondoScroll.play();
                 gusano.play();
@@ -327,7 +327,24 @@ public class App extends Application {
                 imagenFondo2X = 969;
                 imgPajaro1X = 969;
                 imgPajaro2X = - 160;
-                gusanoX = 969;
+                gusanoX = 969;             
+                paneScores = new HBox();
+                paneScores. setTranslateY(20) ;
+                paneScores. setAlignment (Pos.CENTER) ;
+                paneScores. setSpacing(100) ;
+                paneRoot.getChildren().add(paneScores) ;      
+                paneCurrentScore = new HBox();
+                paneCurrentScore. setSpacing(10) ;
+                paneScores.getChildren().add(paneCurrentScore) ;
+                textTitleScore = new Text("Vallas saltadas:");
+                textTitleScore.setFont(Font.font(TEXT_SIZE));
+                textTitleScore.setFill(Color.BLACK);
+                textScore = new Text("0");
+                textScore. setFont (Font. font (TEXT_SIZE));
+                textScore. setFill(Color.BLACK) ;
+                score = 0;
+                paneCurrentScore.getChildren().add(textTitleScore) ;
+                paneCurrentScore.getChildren().add(textScore) ;
                 reinicioPartida = false;
                 finPartida = false;
             }
@@ -392,23 +409,30 @@ public class App extends Application {
                         imgPajaro1.setLayoutX(imgPajaro1X);
                         imgPajaro2.setLayoutX(imgPajaro2X);
                         System.out.println(posXvayas);
-                        
+                        textTitleScore.setFill(Color.TRANSPARENT);
+                        textScore. setFill(Color.TRANSPARENT) ;
+                        HBox panefinal = new HBox();
+                        panefinal.setTranslateY(200) ;
+                        panefinal.setTranslateX(300) ;
+                        panefinal.setAlignment (Pos.CENTER) ;
+                        panefinal.setSpacing(100) ;
+                        textFinal = new Text("Has saltado un total de: "+score+" vallas");
+                        textFinal. setFont (Font. font (TEXT_SIZE));
+                        textFinal. setFill(Color.BLACK) ;
+                        paneRoot.getChildren().add(panefinal) ;
+                        panefinal.getChildren().add(textFinal) ;
+                        paneAbajo = new HBox();
+                        paneAbajo.setTranslateY(300) ;
+                        paneAbajo.setTranslateX(300) ;
+                        paneAbajo.setAlignment (Pos.CENTER) ;
+                        paneAbajo.setSpacing(100) ;
+                        textAbajo = new Text("Pulsa la felcha abajo para reiniciar");
+                        textAbajo. setFont (Font. font (TEXT_SIZE));
+                        textAbajo. setFill(Color.BLACK) ;
+                        paneRoot.getChildren().add(paneAbajo) ;
+                        paneAbajo.getChildren().add(textAbajo) ;
+                        reinicioPartida = true;
                         finPartida = true;     
     }
-    public void finPartida2(){
-        // System.out.println(finPartida);
-        textTitleScore.setFill(Color.TRANSPARENT);
-        textScore. setFill(Color.TRANSPARENT) ;
-        HBox panefinal = new HBox();
-        panefinal.setTranslateY(200) ;
-        panefinal.setTranslateX(300) ;
-        panefinal.setAlignment (Pos.CENTER) ;
-        panefinal.setSpacing(100) ;
-        textFinal = new Text("Has saltado un total de: "+score+" vallas");
-        textFinal. setFont (Font. font (TEXT_SIZE));
-        textFinal. setFill(Color.BLACK) ;
-        paneRoot.getChildren().add(panefinal) ;
-        panefinal.getChildren().add(textFinal) ;   
-        reinicioPartida = true;
-    }
+    
 }
